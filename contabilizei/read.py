@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import statsmodels.api as sm
 from pathlib import Path
 
 # 1. Preamble.
@@ -129,5 +130,40 @@ def import_data(
 
     if drop_negative_monthly_income:
         data = data.loc[data['monthly_income'] >= 0]
+
+    return data
+
+# Function: add_regressors
+
+
+def add_regressors(
+        data: pd.DataFrame,
+        add_constant: bool = True,
+        add_squares: bool = True,
+        add_logs1p: bool = True
+    ):
+    """
+    Add additional regressors.
+
+    Args:
+        data (pd.DataFrame): The DataFrame containing the data.
+        add_constant (bool, optional): Whether to add a constant. Defaults to
+            True.
+        add_squares (bool, optional): Whether to add squares of continuous
+            variables. Defaults to True.
+        add_logs (bool, optional): Whether to add logs of continuous variables.
+            Defaults to True.
+    """
+
+    if add_constant:
+        data = sm.add_constant(data=data)
+
+    if add_squares:
+        for variable in variables_continuous:
+            data[variable + '_squared'] = data[variable] ** 2
+
+    if add_logs1p:
+        for variable in variables_continuous:
+            data[variable + '_log1p'] = np.log1p(data[variable])
 
     return data
