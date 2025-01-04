@@ -7,7 +7,30 @@ from pathlib import Path
 data_path = Path(__file__).resolve().parent.parent / 'data' / \
     'Dados Case - Cientista de Dados [Contabilizei].xlsx'
 
-# 2. Function: import_data.
+# 2. Define continous and discrete variables.
+
+variables_continuous = [
+    'age',
+    'n_access_simulator',
+    'n_partners',
+    'monthly_income',
+    'tickets_opened',
+    'tenure',
+    'csat'
+]
+
+variables_discrete = [
+    'propension',
+    'gender_Feminino',
+    'region_Centro-Oeste',
+    'region_Nordeste',
+    'region_Norte',
+    'region_Sul',
+    'customer_service_channel_Chat',
+    'customer_service_channel_Email'
+]
+
+# 3. Function: import_data.
 
 def import_data(
         dropna: bool = True,
