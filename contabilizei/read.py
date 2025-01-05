@@ -10,28 +10,67 @@ data_path = Path(__file__).resolve().parent.parent / 'data' / \
 
 # 2. Define continous and discrete variables.
 
-variables_continuous = [
+variables_continuous_basic = [
     'age',
+    'csat',
+    'monthly_income',
     'n_access_simulator',
     'n_partners',
-    'monthly_income',
-    'tickets_opened',
     'tenure',
-    'csat'
+    'tickets_opened'
 ]
 
-variables_discrete = [
-    'propension',
+variables_continuous = [
+    'age',
+    'age_squared',
+    'age_log1p',
+    'csat',
+    'csat_squared',
+    'csat_log1p',
+    'monthly_income',
+    'monthly_income_squared',
+    'monthly_income_log1p',
+    'n_access_simulator',
+    'n_access_simulator_squared',
+    'n_access_simulator_log1p',
+    'n_partners',
+    'n_partners_squared',
+    'n_partners_log1p',
+    'tenure',
+    'tenure_squared',
+    'tenure_log1p',
+    'tickets_opened',
+    'tickets_opened_squared',
+    'tickets_opened_log1p',
+    'tickets_opened_per_year',
+    'tickets_opened_per_year_squared',
+    'tickets_opened_per_year_log1p'
+]
+
+variables_discrete_basic = [
+    'customer_service_channel_Chat',
+    'customer_service_channel_Email',
     'gender_Feminino',
+    'propension',
     'region_Centro-Oeste',
     'region_Nordeste',
     'region_Norte',
-    'region_Sul',
+    'region_Sul'
+]
+
+variables_discrete = [
     'customer_service_channel_Chat',
-    'customer_service_channel_Email'
+    'customer_service_channel_Email',
+    'gender_Feminino',
+    'propension',
+    'region_Centro-Oeste',
+    'region_Nordeste',
+    'region_Norte',
+    'region_Sul'
 ]
 
 # 3. Function: import_data.
+
 
 def import_data(
         dropna: bool = True,
@@ -136,34 +175,27 @@ def import_data(
 # Function: add_regressors
 
 
-def add_regressors(
-        data: pd.DataFrame,
-        add_constant: bool = True,
-        add_squares: bool = True,
-        add_logs1p: bool = True
-    ):
+def add_regressors(data: pd.DataFrame):
     """
     Add additional regressors.
 
     Args:
         data (pd.DataFrame): The DataFrame containing the data.
-        add_constant (bool, optional): Whether to add a constant. Defaults to
-            True.
-        add_squares (bool, optional): Whether to add squares of continuous
-            variables. Defaults to True.
-        add_logs (bool, optional): Whether to add logs of continuous variables.
-            Defaults to True.
     """
 
-    if add_constant:
-        data = sm.add_constant(data=data)
+    data = sm.add_constant(data=data)
 
-    if add_squares:
-        for variable in variables_continuous:
-            data[variable + '_squared'] = data[variable] ** 2
+    for variable in variables_continuous_basic:
+        data[variable + '_squared'] = data[variable] ** 2
 
-    if add_logs1p:
-        for variable in variables_continuous:
-            data[variable + '_log1p'] = np.log1p(data[variable])
+    for variable in variables_continuous_basic:
+        data[variable + '_log1p'] = np.log1p(data[variable])
+
+    data['tickets_opened_per_year'] = data['tickets_opened'] / data['tenure']
+    data['tickets_opened_per_year_squared'] = \
+        data['tickets_opened_per_year'] ** 2
+    data['tickets_opened_per_year_log1p'] = \
+        np.log1p(data['tickets_opened_per_year'])
 
     return data
+
