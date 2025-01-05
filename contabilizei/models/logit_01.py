@@ -1,4 +1,6 @@
+import pandas as pd
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix
 import statsmodels.api as sm
 import sys
 from pathlib import Path
@@ -51,12 +53,16 @@ X = data[
 
 y = data[['propension']].astype(float)
 
+# 3. Split data into training data and testing data
+
 X_train, X_test, y_train, y_test = train_test_split(
     X,
     y,
     test_size=.25,
     random_state=966588769 # Randomly selected through random.org.
 )
+
+# 4. Fit logistic regression and print results
 
 model = sm.Logit(
     endog=y_train,
@@ -66,3 +72,16 @@ model = sm.Logit(
 results = model.fit()
 
 print(results.summary())
+
+# 5. Compute confusion matrix
+
+y_true = y_test['propension']
+
+y_pred = results.predict(X_test)
+y_pred = y_pred > .5
+y_pred = y_pred * 1
+
+tn, fp, fn, tp = confusion_matrix(
+    y_true=y_true,
+    y_pred=y_pred
+).ravel()
